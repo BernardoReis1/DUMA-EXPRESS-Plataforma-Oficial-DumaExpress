@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUMA EXpress — A tua encomenda voa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    box-sizing: border-box;
+    --bg: #0f1115;
+    --bg-2: #171a21;
+    --card: #1c1f28;
+    --line: #2a2e38;
+    --text: #f3f1eb;
+    --text-dim: #a6acbb;
+    --orange-1: #ff7a00;
+    --orange-2: #ff3d00;
+    --cream: #f3f1eb;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg: #f6f4ee;
+      --bg-2: #ffffff;
+      --card: #ffffff;
+      --line: #e6e2d8;
+      --text: #18140f;
+      --text-dim: #6b6459;
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg: #f6f4ee;
+    --bg-2: #ffffff;
+    --card: #ffffff;
+    --line: #e6e2d8;
+    --text: #18140f;
+    --text-dim: #6b6459;
+    color-scheme: light;
+  }
+  html{ scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
+  *{ box-sizing: border-box; }
+  html, body{ height: auto; margin:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1,h2,h3, .display{ font-family: 'Poppins', 'Inter', sans-serif; margin: 0; }
+  a{ color: inherit; text-decoration: none; }
+  img{ max-width: 100%; display:block; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .grad-text{
+    background: linear-gradient(120deg, var(--orange-1), var(--orange-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding: 15px 28px; border-radius: 999px; font-weight: 600; font-size: 15px;
+    border: 1px solid transparent; cursor: pointer; font-family: inherit;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:focus-visible{ outline: 3px solid var(--orange-1); outline-offset: 3px; }
+  .btn-primary{
+    background: linear-gradient(120deg, var(--orange-1), var(--orange-2));
+    color: #fff; box-shadow: 0 10px 30px -10px rgba(255,80,0,.65);
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 14px 36px -8px rgba(255,80,0,.75); }
+  .btn-ghost{ background: transparent; border-color: var(--line); color: var(--text); }
+  .btn-ghost:hover{ border-color: var(--orange-1); }
+
+  /* Header */
+  header{
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav{ display:flex; align-items:center; justify-content: space-between; padding: 14px 0; gap: 20px; }
+  .logo-svg{ height: 40px; width: auto; }
+  .nav-links{ display:flex; gap: 30px; font-size: 14.5px; font-weight: 500; color: var(--text-dim); }
+  .nav-links a:hover{ color: var(--orange-1); }
+  .nav-right{ display:flex; align-items:center; gap: 14px; }
+  .nav-toggle, .nav-links{ }
+  .burger{ display:none; background:none; border:none; color:var(--text); font-size:22px; cursor:pointer; padding:6px; }
+
+  /* Hero */
+  .hero{ padding: 72px 0 60px; position: relative; overflow: hidden; }
+  .hero-glow{
+    position:absolute; top:-160px; right:-120px; width:520px; height:520px; border-radius:50%;
+    background: radial-gradient(circle, rgba(255,122,0,.35), transparent 70%);
+    filter: blur(10px); pointer-events:none;
+  }
+  .hero-grid{ display:grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items:center; position:relative; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-size: 13.5px; color: var(--orange-1);
+    font-weight: 600; margin-bottom: 18px;
+  }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background: var(--orange-1); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:.4; transform:scale(1.4);} }
+  .hero h1{ font-size: clamp(34px, 5vw, 56px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; }
+  .hero p.lead{ margin-top: 20px; font-size: 17.5px; color: var(--text-dim); max-width: 46ch; }
+  .hero-actions{ display:flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .hero-stats{ display:flex; gap: 34px; margin-top: 46px; flex-wrap: wrap; }
+  .stat b{ display:block; font-family:'Poppins'; font-size: 25px; font-weight: 800; }
+  .stat span{ font-size: 13px; color: var(--text-dim); }
+
+  .hero-visual{ position:relative; }
+  .parcel-card{
+    background: var(--card); border:1px solid var(--line); border-radius: 22px; padding: 26px;
+    box-shadow: 0 30px 60px -30px rgba(0,0,0,.5);
+  }
+  .track-row{ display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px; }
+  .track-row span.badge{
+    background: rgba(255,122,0,.14); color: var(--orange-1); font-size: 12.5px; font-weight: 700;
+    padding: 6px 12px; border-radius: 999px;
+  }
+  .track-path{ position:relative; padding-left: 26px; }
+  .track-step{ position:relative; padding: 0 0 26px 0; }
+  .track-step:last-child{ padding-bottom:0; }
+  .track-step::before{
+    content:''; position:absolute; left:-26px; top:3px; width:14px; height:14px; border-radius:50%;
+    background: var(--orange-1); box-shadow: 0 0 0 4px rgba(255,122,0,.18);
+  }
+  .track-step::after{
+    content:''; position:absolute; left:-20px; top:19px; width:2px; height:calc(100% - 4px);
+    background: var(--line);
+  }
+  .track-step:last-child::after{ display:none; }
+  .track-step b{ display:block; font-size: 14.5px; font-weight: 600; }
+  .track-step span{ font-size: 12.5px; color: var(--text-dim); }
+
+  /* section heading */
+  .section{ padding: 78px 0; }
+  .section-head{ max-width: 620px; margin-bottom: 44px; }
+  .section-head .kicker{ color: var(--orange-1); font-weight: 600; font-size: 14px; margin-bottom: 10px; display:block; }
+  .section-head h2{ font-size: clamp(26px, 3.4vw, 36px); font-weight: 800; letter-spacing: -.01em; }
+  .section-head p{ color: var(--text-dim); margin-top: 14px; font-size: 15.5px; }
+
+  /* categories */
+  .cat-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .cat-card{
+    background: var(--card); border:1px solid var(--line); border-radius: 18px; padding: 24px;
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .cat-card:hover{ border-color: var(--orange-1); transform: translateY(-4px); }
+  .cat-icon{ width:44px; height:44px; margin-bottom: 16px; }
+  .cat-card h3{ font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .cat-card p{ font-size: 13.5px; color: var(--text-dim); margin:0; }
+
+  /* products */
+  .prod-scroller{ display:grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+  .prod-card{ background: var(--card); border:1px solid var(--line); border-radius: 18px; overflow:hidden; }
+  .prod-thumb{
+    aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--orange-1) 18%, var(--bg-2)), var(--bg-2));
+  }
+  .prod-thumb svg{ width: 56%; height: 56%; opacity:.92; }
+  .prod-body{ padding: 18px; }
+  .prod-tag{ font-size:11.5px; color: var(--orange-1); font-weight:700; }
+  .prod-body h3{ font-size: 15px; font-weight:600; margin: 6px 0 10px; }
+  .prod-price-row{ display:flex; justify-content:space-between; align-items:center; }
+  .prod-price{ font-family:'Poppins'; font-weight:800; font-size: 17px; }
+  .prod-old{ font-size:12.5px; color: var(--text-dim); text-decoration: line-through; margin-right:6px; }
+  .add-btn{
+    width:36px; height:36px; border-radius: 50%; border:1px solid var(--line); background: transparent;
+    color: var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition: background .18s ease, border-color .18s ease;
+  }
+  .add-btn:hover{ background: var(--orange-1); border-color: var(--orange-1); color:#fff; }
+
+  /* process */
+  .process{ background: var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .steps{ display:grid; grid-template-columns: repeat(3,1fr); gap: 30px; }
+  .step-card{ position: relative; padding-left: 0; }
+  .step-num{
+    font-family:'Poppins'; font-size: 44px; font-weight: 900; line-height:1;
+    background: linear-gradient(120deg, var(--orange-1), var(--orange-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom: 14px; display:block;
+  }
+  .step-card h3{ font-size: 18px; font-weight:700; margin-bottom: 8px; }
+  .step-card p{ font-size: 14.5px; color: var(--text-dim); margin:0; max-width: 34ch; }
+
+  /* trust */
+  .trust-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+  .trust-item{ display:flex; gap:14px; align-items:flex-start; }
+  .trust-icon{
+    flex: none; width: 42px; height:42px; border-radius: 12px; background: rgba(255,122,0,.12);
+    display:flex; align-items:center; justify-content:center; color: var(--orange-1);
+  }
+  .trust-item h3{ font-size:15px; font-weight:700; margin-bottom:4px; }
+  .trust-item p{ font-size: 13.5px; color: var(--text-dim); margin:0; }
+
+  /* testimonial */
+  .testi{
+    background: var(--card); border:1px solid var(--line); border-radius: 22px; padding: 46px;
+    display:grid; grid-template-columns: auto 1fr; gap: 30px; align-items:center;
+  }
+  .testi-avatar{
+    width:64px; height:64px; border-radius:50%;
+    background: linear-gradient(140deg, var(--orange-1), var(--orange-2));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Poppins'; font-weight:800; font-size:22px;
+  }
+  .testi p.quote{ font-size: 19px; line-height:1.5; }
+  .testi .who{ margin-top: 14px; font-size: 13.5px; color: var(--text-dim); }
+
+  /* CTA */
+  .cta-band{
+    background: linear-gradient(120deg, var(--orange-1), var(--orange-2));
+    border-radius: 28px; padding: 56px; display:flex; align-items:center; justify-content:space-between;
+    gap: 30px; flex-wrap: wrap; color:#fff;
+  }
+  .cta-band h2{ font-size: clamp(24px,3.2vw,32px); font-weight:800; max-width: 460px; }
+  .cta-band .btn-ghost{ background:#fff; color:#ff5a00; border-color:#fff; font-weight:700; }
+  .cta-band .btn-ghost:hover{ transform: translateY(-2px); }
+
+  footer{ border-top: 1px solid var(--line); padding: 54px 0 34px; }
+  .foot-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+  .foot-col h4{ font-size:14px; margin-bottom:14px; }
+  .foot-col a{ display:block; font-size:14px; color: var(--text-dim); margin-bottom:10px; }
+  .foot-col a:hover{ color: var(--orange-1); }
+  .foot-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top: 24px; border-top:1px solid var(--line); font-size:13px; color: var(--text-dim); flex-wrap:wrap; gap:12px; }
+  .socials{ display:flex; gap:12px; }
+  .socials a{ width:36px; height:36px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
+  .socials a:hover{ border-color: var(--orange-1); color: var(--orange-1); }
+
+  .overflow-x{ overflow-x:auto; }
+
+  @media (max-width: 920px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .cat-grid{ grid-template-columns: repeat(2,1fr); }
+    .prod-scroller{ grid-template-columns: repeat(2,1fr); }
+    .steps{ grid-template-columns: 1fr; gap: 40px; }
+    .trust-grid{ grid-template-columns: repeat(2,1fr); }
+    .foot-grid{ grid-template-columns: repeat(2,1fr); }
+    .testi{ grid-template-columns: 1fr; text-align:center; }
+    .testi-avatar{ margin: 0 auto; }
+    .nav-links{ display:none; }
+    .burger{ display:block; }
+  }
+  @media (max-width: 560px){
+    .cat-grid{ grid-template-columns: 1fr 1fr; }
+    .prod-scroller{ grid-template-columns: 1fr 1fr; }
+    .cta-band{ padding: 34px; }
+    .testi{ padding: 30px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <svg class="logo-svg" viewBox="0 0 420 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DUMA EXpress">
+      <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ff7a00"/>
+          <stop offset="100%" stop-color="#ff3d00"/>
+        </linearGradient>
+      </defs>
+      <g transform="translate(10 15)">
+        <circle cx="45" cy="45" r="43" fill="url(#gradient)"/>
+        <path d="M23 37 L45 25 L67 37 L67 62 L45 74 L23 62 Z" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M23 37 L45 49 L67 37" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M45 49 V74" fill="none" stroke="#fff" stroke-width="5"/>
+        <path d="M13 52 H28" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <path d="M15 60 H27" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <text x="115" y="65" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#ff5a00">Duma</text>
+      <text x="115" y="92" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" letter-spacing="4" fill="#ff5a00">EXPRESS</text>
+    </svg>
+    <nav class="nav-links">
+      <a href="#categorias">Categorias</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#confianca">Porquê nós</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#produtos" class="btn btn-primary" style="padding:11px 22px; font-size:14px;">Começar a comprar</a>
+      <button class="burger" aria-label="Abrir menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Entregas em Luanda no mesmo dia</span>
+        <h1>O que encomendas de manhã, chega antes do pôr-do-sol.</h1>
+        <p class="lead">A DUMA EXpress junta um catálogo enorme de produtos a uma rede de entrega que não perde tempo. Compra no telemóvel, acompanha o pacote em tempo real e recebe à porta.</p>
+        <div class="hero-actions">
+          <a href="#produtos" class="btn btn-primary">Explorar produtos</a>
+          <a href="#como-funciona" class="btn btn-ghost">Ver como funciona</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b>2h30</b><span>tempo médio de entrega</span></div>
+          <div class="stat"><b>48 mil+</b><span>encomendas entregues</span></div>
+          <div class="stat"><b>4.8/5</b><span>avaliação dos clientes</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="parcel-card">
+          <div class="track-row">
+            <div>
+              <div style="font-size:13px;color:var(--text-dim);">Encomenda #DX-58231</div>
+              <div style="font-weight:700;font-size:15.5px;margin-top:2px;">Fones Bluetooth Aria Pro</div>
+            </div>
+            <span class="badge">A caminho</span>
+          </div>
+          <div class="track-path">
+            <div class="track-step"><b>Pedido confirmado</b><span>Hoje, 09:12</span></div>
+            <div class="track-step"><b>Separado no armazém do Kilamba</b><span>Hoje, 10:05</span></div>
+            <div class="track-step"><b>Saiu para entrega</b><span>Hoje, 11:40</span></div>
+            <div class="track-step"><b>Chega em Talatona</b><span>previsão 13:30</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categorias">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Explora</span>
+        <h2>Um pouco de tudo, entregue depressa</h2>
+        <p>Escolhe a categoria e deixa a logística connosco.</p>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-card">
+          <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.7"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <h3>Eletrónica</h3>
+          <p>Telemóveis, áudio e acessórios</p>
+        </div>
+        <div class="cat-card">
+          <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.7"><path d="M6 4h12l1 4H5l1-4Z"/><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8a3 3 0 0 0 6 0"/></svg>
+          <h3>Moda</h3>
+          <p>Roupa e calçado para todos os dias</p>
+        </div>
+        <div class="cat-card">
+          <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.7"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>
+          <h3>Casa &amp; Cozinha</h3>
+          <p>Utensílios, decoração e conforto</p>
+        </div>
+        <div class="cat-card">
+          <svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.7"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c1.2-4.2 4.4-6.5 7-6.5S17.8 16.8 19 21"/></svg>
+          <h3>Beleza &amp; Cuidado</h3>
+          <p>Cosmética e higiene pessoal</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="produtos" style="padding-top:0;">
+    <div class="wrap">
+      <div class="section-head" style="display:flex; align-items:flex-end; justify-content:space-between; max-width:none; gap:20px; flex-wrap:wrap;">
+        <div>
+          <span class="kicker">Mais vendidos</span>
+          <h2>A sair do armazém agora</h2>
+        </div>
+        <a href="#" class="btn btn-ghost" style="padding:11px 20px;">Ver catálogo completo</a>
+      </div>
+      <div class="prod-scroller">
+        <div class="prod-card">
+          <div class="prod-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.4"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v5a2 2 0 0 0 2 2h1v-7H4Z"/><path d="M20 13v5a2 2 0 0 1-2 2h-1v-7h3Z"/></svg></div>
+          <div class="prod-body">
+            <span class="prod-tag">Eletrónica</span>
+            <h3>Fones Bluetooth Aria Pro</h3>
+            <div class="prod-price-row">
+              <div><span class="prod-old">18.500 Kz</span><span class="prod-price">14.900 Kz</span></div>
+              <button class="add-btn" aria-label="Adicionar ao carrinho">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.4"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 18h4"/></svg></div>
+          <div class="prod-body">
+            <span class="prod-tag">Eletrónica</span>
+            <h3>Smartphone Nexis 5G 128GB</h3>
+            <div class="prod-price-row">
+              <div><span class="prod-price">129.900 Kz</span></div>
+              <button class="add-btn" aria-label="Adicionar ao carrinho">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.4"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-7h6v7"/></svg></div>
+          <div class="prod-body">
+            <span class="prod-tag">Casa</span>
+            <h3>Conjunto de Panelas Inox 5pç</h3>
+            <div class="prod-price-row">
+              <div><span class="prod-old">42.000 Kz</span><span class="prod-price">33.500 Kz</span></div>
+              <button class="add-btn" aria-label="Adicionar ao carrinho">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#ff7a00" stroke-width="1.4"><path d="M7 4h10l1 5H6l1-5Z"/><path d="M5 9h14l-1.2 11H6.2L5 9Z"/></svg></div>
+          <div class="prod-body">
+            <span class="prod-tag">Moda</span>
+            <h3>Ténis Urban Flex Unissexo</h3>
+            <div class="prod-price-row">
+              <div><span class="prod-price">21.900 Kz</span></div>
+              <button class="add-btn" aria-label="Adicionar ao carrinho">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section process" id="como-funciona">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Simples assim</span>
+        <h2>Da escolha à porta de casa</h2>
+      </div>
+      <div class="steps">
+        <div class="step-card">
+          <span class="step-num">01</span>
+          <h3>Escolhes e confirmas</h3>
+          <p>Navega o catálogo, adiciona ao carrinho e paga por transferência, Multicaixa Express ou na entrega.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">02</span>
+          <h3>Preparamos e despachamos</h3>
+          <p>O teu pedido sai do armazém mais próximo e entra logo na rota de entrega da tua zona.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">03</span>
+          <h3>Acompanhas e recebes</h3>
+          <p>Segues o estafeta em tempo real no mapa até a encomenda chegar à tua porta.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="confianca">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Porquê a DUMA</span>
+        <h2>Feito para quem não quer esperar</h2>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></div>
+          <div><h3>Entrega expressa</h3><p>Rotas otimizadas para as principais zonas de Luanda.</p></div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/></svg></div>
+          <div><h3>Pagamento seguro</h3><p>Transferência, Multicaixa Express ou dinheiro na entrega.</p></div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 12h6M3 8l4 4-4 4"/></svg></div>
+          <div><h3>Devolução fácil</h3><p>7 dias para trocar ou devolver sem complicações.</p></div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.3 8.3 0 0 1-4.7-1.5L3 19l1.6-4.5A8.4 8.4 0 1 1 21 11.5Z"/></svg></div>
+          <div><h3>Suporte real</h3><p>Equipa por WhatsApp para qualquer dúvida sobre o pedido.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="testi">
+        <div class="testi-avatar">JL</div>
+        <div>
+          <p class="quote">"Pedi de manhã de camino para o trabalho e à hora do almoço já estava com a encomenda em casa. Nunca vi uma loja tão rápida em Luanda."</p>
+          <div class="who">Joana L. — cliente em Talatona</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="wrap">
+      <div class="cta-band">
+        <h2>Pronto para receber a tua próxima encomenda hoje mesmo?</h2>
+        <a href="#produtos" class="btn btn-ghost">Começar a comprar agora</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <svg width="150" height="44" viewBox="0 0 420 120" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:14px;">
+          <g transform="translate(10 15)"><circle cx="45" cy="45" r="43" fill="url(#gradient)"/><path d="M23 37 L45 25 L67 37 L67 62 L45 74 L23 62 Z" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/><path d="M23 37 L45 49 L67 37" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/><path d="M45 49 V74" fill="none" stroke="#fff" stroke-width="5"/></g>
+          <text x="115" y="65" font-family="Arial" font-size="38" font-weight="800" fill="#ff5a00">Duma</text>
+          <text x="115" y="92" font-family="Arial" font-size="21" font-weight="700" letter-spacing="4" fill="#ff5a00">EXPRESS</text>
+        </svg>
+        <p style="font-size:13.5px;color:var(--text-dim);max-width:32ch;">O ecommerce que entrega mais rápido do que consegues terminar o café.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Loja</h4>
+        <a href="#categorias">Categorias</a>
+        <a href="#produtos">Produtos</a>
+        <a href="#">Promoções</a>
+      </div>
+      <div class="foot-col">
+        <h4>Apoio</h4>
+        <a href="#">Acompanhar encomenda</a>
+        <a href="#">Trocas e devoluções</a>
+        <a href="#">Fala connosco</a>
+      </div>
+      <div class="foot-col">
+        <h4>Empresa</h4>
+        <a href="#">Sobre a DUMA</a>
+        <a href="#">Trabalha connosco</a>
+        <a href="#">Termos e privacidade</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 DUMA EXpress. Todos os direitos reservados.</span>
+      <div class="socials">
+        <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8h-2a2 2 0 0 0-2 2v10M9 13h6"/><circle cx="12" cy="12" r="10"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.burger')?.addEventListener('click', () => {
+    const links = document.querySelector('.nav-links');
+    if (!links) return;
+    const isOpen = links.style.display === 'flex';
+    links.style.cssText = isOpen ? '' : 'display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; background:var(--bg-2); padding:20px 28px; border-bottom:1px solid var(--line); gap:16px;';
+  });
+</script>
+</body>
+</html>
